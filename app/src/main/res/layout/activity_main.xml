@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.MainActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        tools:context="pe.gob.qw.fichas.MainActivity">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:id="@+id/rlMain">
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TYPE:  "
+            android:id="@+id/swType"
+            android:textOff="DES"
+            android:showText="true"
+            android:textOn="3DES"
+            android:textStyle="bold"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="44dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtMessage"
+            android:layout_alignParentTop="false"
+            android:layout_centerHorizontal="true"
+            android:hint="MENSAJE A CIFRAR"
+            android:gravity="center"
+            android:layout_below="@+id/swType"
+            android:layout_marginTop="20dp" />
+
+        <Button
+            style="@style/ButtonStyle.RaisedFull"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Crypt"
+            android:id="@+id/btnCrypt"
+            android:layout_below="@+id/txtMessage"
+            android:layout_alignEnd="@+id/txtMessage" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtCrypt"
+            android:layout_below="@+id/btnCrypt"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:hint="MENSAJE CIFRADO"
+            android:layout_marginTop="20dp" />
+
+        <Button
+            style="@style/ButtonStyle.RaisedFull"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Decrypt"
+            android:id="@+id/btnDecrypt"
+            android:layout_below="@+id/txtCrypt"
+            android:layout_alignEnd="@+id/txtCrypt" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtDecrypt"
+            android:layout_below="@+id/btnDecrypt"
+            android:layout_centerHorizontal="true"
+            android:hint="MENSAJE DESCIFRADO"
+            android:gravity="center"
+            android:layout_marginTop="20dp" />
+
+        <Button
+            style="@style/ButtonStyle.RaisedFull"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CLEAR"
+            android:id="@+id/btnClear"
+            android:layout_below="@+id/txtDecrypt"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="20dp" />
+
+        <TextView
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:id="@+id/textViewCopyright"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/splash_copyright"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+</RelativeLayout>

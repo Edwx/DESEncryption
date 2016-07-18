@@ -1,104 +1,174 @@
 package pe.edu.utp.desencryption.ui;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Switch;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
 import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 
+import java.util.ArrayList;
+
 import pe.edu.utp.desencryption.R;
-import pe.edu.utp.desencryption.app.Encryption;
-import pe.edu.utp.desencryption.app.Utility;
+import pe.edu.utp.desencryption.app.Drawer;
+import pe.edu.utp.desencryption.app.DrawerAdapter;
+import pe.edu.utp.desencryption.ui.fragment.DecryptFragment;
+import pe.edu.utp.desencryption.ui.fragment.EncryptFragment;
+import pe.edu.utp.desencryption.ui.fragment.MainFragment;
+import pe.edu.utp.desencryption.util.Utility;
+
 
 public class MainActivity extends AppCompatActivity {
+    public static ShareActionProvider shareActionProvider;
+    private Toolbar mToolbar;
+    private ListView mDrawerList;
+    private ArrayList<Drawer> list;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    NiftyDialogBuilder customDialog, customDialog2;
 
-    Button btnCrypt;
-    Button btnDecrypt;
-    Button btnClear;
-    EditText txtMessage;
-    EditText txtKey;
-    EditText txtCrypt;
-    EditText txtDecrypt;
-    Encryption myEncryptor;
-    Switch swType;
-    NiftyDialogBuilder customDialog;
+    private Fragment InicioFragment;
+    private CharSequence mDrawerTitle;
+    private CharSequence mTitle;
+    private Handler mHandler;
+
+    private boolean mShouldFinish = false;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setTitle(getTitle());
-        }
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         customDialog = NiftyDialogBuilder.getInstance(this);
+        customDialog2 = NiftyDialogBuilder.getInstance(this);
 
-        swType = (Switch) findViewById(R.id.swType);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+            public void onDrawerClosed(View view) {
+                getSupportActionBar().setTitle(mTitle);
+                invalidateOptionsMenu();
+            }
 
-        btnCrypt = (Button) findViewById(R.id.btnCrypt);
-        btnCrypt.setOnClickListener(new OnClickListenerCrypt());
+            public void onDrawerOpened(View drawerView) {
+                getSupportActionBar().setTitle(mDrawerTitle);
+                invalidateOptionsMenu();
+            }
+        };
 
-        btnDecrypt = (Button) findViewById(R.id.btnDecrypt);
-        btnDecrypt.setOnClickListener(new OnClickListenerDecrypt());
-        btnDecrypt.setEnabled(false);
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        mTitle = mDrawerTitle = getTitle();
+        mDrawerList = (ListView) findViewById(R.id.list_view);
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
-        btnClear = (Button) findViewById(R.id.btnClear);
-        btnClear.setOnClickListener(new OnClickListenerClear());
+        prepareNavigationDrawerItems();
 
-        txtMessage = (EditText) findViewById(R.id.txtMessage);
-        //txtKey = (EditText) findViewById(R.id.txtKey);
-        txtCrypt = (EditText) findViewById(R.id.txtCrypt);
-        txtCrypt.setKeyListener(null);
-        txtDecrypt = (EditText) findViewById(R.id.txtDecrypt);
-        txtDecrypt.setKeyListener(null);
+        View headerView = getLayoutInflater().inflate(R.layout.nav_header_main, mDrawerList, false);
+        mDrawerList.addHeaderView(headerView);
+        mDrawerList.setAdapter(new DrawerAdapter(this, list));
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+        int color = getResources().getColor(R.color.material_grey_100);
+        mDrawerList.setBackgroundColor(color);
+        mDrawerList.getLayoutParams().width = (int) getResources().getDimension(R.dimen.drawer_width);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+
+        mHandler = new Handler();
+
+        if (savedInstanceState == null) {
+            int position = 1;
+            selectItem(position, list.get(position-1).getId());
+            mDrawerLayout.openDrawer(GravityCompat.START);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!mShouldFinish && !mDrawerLayout.isDrawerOpen(mDrawerList)) {
+            Toast.makeText(getApplicationContext(), "Presiona nuevamente retroceder para salir.", Toast.LENGTH_SHORT).show();
+            mShouldFinish = true;
+            mDrawerLayout.openDrawer(mDrawerList);
+        } else if (!mShouldFinish && mDrawerLayout.isDrawerOpen(mDrawerList)) {
+            mDrawerLayout.closeDrawer(mDrawerList);
+        } else {
+            if (mDrawerList.getCheckedItemPosition()>1) {
+                selectItem(1, list.get(0).getId());
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                mShouldFinish = false;
+            }
+            else {
+                super.onBackPressed();
+            }
+        }
+    }
+
+    private void prepareNavigationDrawerItems() {
+        list = new ArrayList<>();
+        list.add(new Drawer(0, "", "Home", R.drawable.ic_home_black));
+        list.add(new Drawer(1, "", "Encrypt", R.drawable.ic_assignment_black));
+        list.add(new Drawer(2, "", "Decrypt", R.drawable.ic_assignment_black));
+        list.add(new Drawer(3, "", "Exit", R.drawable.ic_menu_logout_black));
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.encrypt, menu);
+
+        MenuItem shareItem = menu.findItem(R.id.action_share);
+        shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_key) {
-
+        if (mDrawerToggle.onOptionsItemSelected(item)) return true;
+        else if (id == R.id.action_key){
             customDialog
-                    .withTitle(null)                                  //.withTitle(null)  no title
-                    //.withTitleColor("#FFFFFF")                                  //def
-                    //.withDividerColor("#FFFFFF")                              //def
-                    //.withMessage("Si descalifica al astablecimiento, esta ficha se guardará y no podrá modificarla.")                     //.withMessage(null)  no Msg
-                    .withMessageColor("#FFFFFFFF")                              //def  | withMessageColor(int resid)
-                    .withDialogColor(getResources().getColor(R.color.colorPrimary))                               //def  | withDialogColor(int resid)
-                    .withDuration(300)                                          //def
-                    .withEffect(Effectstype.Slideleft)                                         //def Effectstype.Slidetop
-                    .isCancelableOnTouchOutside(true)                           //def    | isCancelable(true)
-                    .setCustomView(R.layout.text_key, this);         //.setCustomView(View or ResId,context)
-
+                    .withTitle(null)
+                    .withMessageColor("#FFFFFFFF")
+                    .withDialogColor(getResources().getColor(R.color.colorPrimary))
+                    .withDuration(300)
+                    .withEffect(Effectstype.Slidetop)
+                    .isCancelableOnTouchOutside(true)
+                    .setCustomView(R.layout.text_key, this);
 
             final TextInputEditText txtKey = (TextInputEditText) customDialog.findViewById(R.id.txtKey);
-            txtKey.setText(Utility.myStaticEncryptionKey);
+            txtKey.setText(Utility.displayKey(MainActivity.this));
 
             customDialog.findViewById(R.id.btnAceptar).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (txtKey.getText().toString().length() > 0) {
-                        if (txtKey.getText().toString().length() > 24) {
-                            Utility.myStaticEncryptionKey = txtKey.getText().toString();
-                            reload();
+                        if (txtKey.getText().toString().length() > 23) {
+                            Utility.updateKey(txtKey.getText().toString());
                             customDialog.dismiss();
                         }
                         else Utility.alert(MainActivity.this, "Caractéres mínimos: 24", true);
@@ -122,40 +192,123 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class OnClickListenerCrypt implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            if(!txtMessage.getText().toString().trim().isEmpty()){
-                try {
-                    myEncryptor = new Encryption(swType.isChecked());
-                    txtCrypt.setText(myEncryptor.encrypt(txtMessage.getText().toString()).trim());
-                    btnDecrypt.setEnabled(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+    private void logout() {
+        customDialog2
+                .withTitle("DES y 3DES")                                  //.withTitle(null)  no title
+                .withTitleColor("#FFFFFF")                                  //def
+                .withDividerColor("#FFFFFF")                              //def
+                .withMessage("Desea salir de la aplicación?")                     //.withMessage(null)  no Msg
+                .withMessageColor("#FFFFFFFF")                              //def  | withMessageColor(int resid)
+                .withDialogColor(getResources().getColor(R.color.colorPrimary))                               //def  | withDialogColor(int resid)
+                .withDuration(300)                                          //def
+                .withEffect(Effectstype.Slidetop)                                         //def Effectstype.Slidetop
+                .isCancelableOnTouchOutside(true)                           //def    | isCancelable(true)
+                .setCustomView(R.layout.text_close, this);         //.setCustomView(View or ResId,context)
+
+        customDialog2.findViewById(R.id.btnAceptar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customDialog2.dismiss();
+                finish();
             }
-        }
+        });
+
+        customDialog2.findViewById(R.id.btnCancelar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customDialog2.dismiss();
+            }
+        });
+
+        customDialog2.isCancelable(false).show();
     }
 
-    private class OnClickListenerDecrypt implements View.OnClickListener {
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
-        public void onClick(View view) {
-            txtDecrypt.setText(myEncryptor.decrypt(txtCrypt.getText().toString()));
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if (position > 0) { // because we have header, we skip clicking on it
+                selectItem(position, list.get(position-1).getId());
+            }
+
         }
     }
 
-    private class OnClickListenerClear implements View.OnClickListener {
+    private void selectItem(int position, int drawerTag) {
+        if (position < 1) { // because we have header, we skip clicking on it
+            return;
+        }
+
+        getFragmentByDrawerTag(drawerTag);
+
+        mDrawerList.setItemChecked(position, true);
+        mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+    private void getFragmentByDrawerTag(int drawerTag) {
+        InicioFragment = null;
+        if (drawerTag == 0) {
+            InicioFragment = new MainFragment();
+            commitFragment(InicioFragment);
+        }
+        else if (drawerTag == 1){
+            InicioFragment = new EncryptFragment();
+            commitFragment(InicioFragment);
+        }
+        else if (drawerTag == 2) {
+            InicioFragment = new DecryptFragment();
+            commitFragment(InicioFragment);
+        }
+        else if (drawerTag == 3){
+            logout();
+        }
+        else {
+            InicioFragment = new Fragment();
+            commitFragment(InicioFragment);
+        }
+
+        mShouldFinish = false;
+    }
+
+    public void commitFragment(Fragment fragment) {
+
+        mHandler.post(new CommitFragmentRunnable(fragment));
+    }
+
+    private class CommitFragmentRunnable implements Runnable {
+
+        private Fragment fragment;
+
+        public CommitFragmentRunnable(Fragment fragment) {
+            this.fragment = fragment;
+        }
+
         @Override
-        public void onClick(View view) {
-            reload();
+        public void run() {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.content, fragment).commit();
         }
     }
 
-    private void reload() {
-        txtCrypt.setText("");
-        txtDecrypt.setText("");
+    @Override
+    public void setTitle(int titleId) {
+        setTitle(getString(titleId));
+    }
 
-        btnDecrypt.setEnabled(false);
-        txtMessage.requestFocus();
+    @Override
+    public void setTitle(CharSequence title) {
+        mTitle = title;
+        getSupportActionBar().setTitle(mTitle);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 }

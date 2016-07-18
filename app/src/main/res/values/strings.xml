@@ -2,9 +2,17 @@
     <string name="app_name">DES y 3DES</string>
     <string name="splash_screen_description">UTP Splash</string>
     <string name="splash_copyright">Edwar A. Gaspar \n Gerson Valdivia Vergara \n UTP ® 2016 Todos los derechos reservados</string>
-    <string name="action_key">KEY</string>
+    <string name="action_key">Key</string>
     <string name="action_off">Exit</string>
+    <string name="action_share">Share</string>
 
     <!-- TOAST -->
     <string name="fontello_toast">&#xec4a;</string>
+
+    <!-- MAIN -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

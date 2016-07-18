@@ -2,16 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_share"
+        android:title="@string/action_share"
+        app:showAsAction="ifRoom"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>
+    <item
         android:id="@+id/action_key"
         android:orderInCategory="100"
         android:icon="@drawable/ic_menu_key2"
         android:title="@string/action_key"
         app:showAsAction="always" />
-
+<!--
     <item
         android:id="@+id/action_close"
         android:orderInCategory="200"
         android:icon="@drawable/ic_menu_off"
         android:title="@string/action_off"
         app:showAsAction="always" />
+ -->
 </menu>

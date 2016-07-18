@@ -21,7 +21,7 @@
         android:paddingRight="20dp"
         android:paddingLeft="20dp">
 
-        <pe.edu.utp.desencryption.app.MaterialDesignIconsTextView
+        <pe.edu.utp.desencryption.util.MaterialDesignIconsTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/fontello_toast"

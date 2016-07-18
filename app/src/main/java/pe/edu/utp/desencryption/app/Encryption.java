@@ -10,9 +10,6 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.DESedeKeySpec;
 
-/**
- * Created by uadin12 on 14/07/2016.
- */
 public class Encryption {
     private static final String UNICODE_FORMAT = "UTF8";
     public static final String DESEDE_ENCRYPTION_SCHEME = "DESede";
@@ -25,10 +22,9 @@ public class Encryption {
     private String myEncryptionScheme;
     SecretKey key;
 
-    public Encryption(boolean type) throws Exception {
-
-        myEncryptionKey = Utility.myStaticEncryptionKey;
-        //myEncryptionKey = "ThisIsSecretEncryptionKey";
+    public Encryption(boolean type, String sharedKey) throws Exception {
+        myEncryptionKey = sharedKey;
+        //myEncryptionKey = Utility.myStaticEncryptionKey;
         myEncryptionScheme = (type) ? DESEDE_ENCRYPTION_SCHEME : DES_ENCRYPTION_SCHEME;
         keyAsBytes = myEncryptionKey.getBytes(UNICODE_FORMAT);
         myKeySpec = (type) ? new DESedeKeySpec(keyAsBytes) : new DESKeySpec(keyAsBytes);

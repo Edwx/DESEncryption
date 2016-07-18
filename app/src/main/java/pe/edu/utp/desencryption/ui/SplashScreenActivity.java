@@ -22,9 +22,9 @@ import android.widget.RelativeLayout;
 import pe.edu.utp.desencryption.R;
 
 
-public class ActivitySplashScreen extends Activity {
+public class SplashScreenActivity extends Activity {
     
-    private static long SPLASH_MILLIS = 1000;
+    private static long SPLASH_MILLIS = 1500;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,9 +41,9 @@ public class ActivitySplashScreen extends Activity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(ActivitySplashScreen.this,MainActivity.class);
+                Intent intent = new Intent(SplashScreenActivity.this,MainActivity.class);
                 startActivity(intent);
-                ActivitySplashScreen.this.finish();
+                SplashScreenActivity.this.finish();
             }
         }, SPLASH_MILLIS);
     }

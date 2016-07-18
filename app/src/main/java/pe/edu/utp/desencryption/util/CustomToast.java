@@ -1,4 +1,4 @@
-package pe.edu.utp.desencryption.app;
+package pe.edu.utp.desencryption.util;
 
 import android.content.Context;
 import android.view.LayoutInflater;

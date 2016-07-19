@@ -38,6 +38,8 @@ public class EncryptFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View myFragmentView = inflater.inflate(R.layout.fragment_encrypt, container, false);
 
+        this.getActivity().setTitle("Cifrar");
+
         customDialog = NiftyDialogBuilder.getInstance(EncryptFragment.this.getActivity());
         customDialog2 = NiftyDialogBuilder.getInstance(EncryptFragment.this.getActivity());
 

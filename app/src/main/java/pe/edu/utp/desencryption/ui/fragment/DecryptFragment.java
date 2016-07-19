@@ -38,6 +38,8 @@ public class DecryptFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View myFragmentView = inflater.inflate(R.layout.fragment_decrypt, container, false);
 
+        this.getActivity().setTitle("Descifrar");
+
         customDialog = NiftyDialogBuilder.getInstance(DecryptFragment.this.getActivity());
         customDialog2 = NiftyDialogBuilder.getInstance(DecryptFragment.this.getActivity());
 
